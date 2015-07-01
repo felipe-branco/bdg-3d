@@ -1,58 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="utf-8" />
-	<title>BDG 3D</title>
-
-	<!--[if IE]>
-  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-
-  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-
-  <style type="text/css">
-  	#map {
-  		position: absolute;
-  		left: 0;
-  		top: 0;
-  		width: 100%;
-  		height: 100%;
-  	}
-  </style>
+<meta charset="UTF-8">
+<title>BDG - Pontos Cotados</title>
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<link rel="stylesheet" type="text/css" href="./Qgis2threejs.css">
 </head>
 <body>
-	<div id="map"></div>
-	<script type="text/javascript">
-		var map = L.map('map').setView([-19.8157,-43.9542], 8);
-		L.tileLayer('https://{s}.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZmVsaXBlLWJyYW5jbyIsImEiOiIwYmE2ODQ5MTg3OWIzNTczNDNiNGEzMzIwOTU4MDlkYyJ9.YpFLghLNfjNKS1xxq8Z4ag',
-		{
-	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-	    maxZoom: 18
-		}).addTo(map);
+<div id="webgl"></div>
 
-		$.ajax({
-      url: 'json.php',
-      dataType: 'json',
-      complete: function() {
-        console.log('complete');
-      },
-      success: function(json) {
-      	$.each(json, function(i, obj) {
-      		var pointList = [];
-      		$.each(obj, function(i2, obj2) {
-      			pointList.push(new L.LatLng(obj2[0],obj2[1],obj2[2]));
-      		});
-      		console.log(pointList);
-      		var firstpolyline = new L.Polygon(pointList, {
-						color: 'red',
-						fillColor: '#f03',
-						opacity: 0.9
-					});
-					map.addLayer(firstpolyline);
-      	});
-      }
-    });
-	</script>
+<!-- popup -->
+<div id="popup" style="display:none;">
+<div id="closebtn">&times;</div>
+<div id="popupbar"></div>
+<div id="popupbody">
+ <div id="popupcontent"></div>
+ <div id="pageinfo">
+  <h1>Current View URL</h1>
+  <div><input id="urlbox" type="text"></div>
+
+  <h1>Usage</h1>
+  <div id="usage"></div>
+
+  <h1>About</h1>
+  <div id="about">This page was made with <a href="http://www.qgis.org/" target="_blank">QGIS</a> and <a href="https://github.com/minorua/Qgis2threejs" target="_blank">Qgis2threejs</a> plugin, 
+and uses the following library:
+  <ul>
+  <li>three.js <a href="http://threejs.org/" target="_blank">http://threejs.org/</a> <a href="./threejs/LICENSE" target="_blank" class="license">(LICENSE)</a></li>
+  <li>dat-gui <a href="https://code.google.com/p/dat-gui/" target="_blank">https://code.google.com/p/dat-gui/</a> <a href="./dat-gui/license.txt" target="_blank" class="license">(LICENSE)</a></li>
+  <li id="lib_proj4js" style="display: none;">Proj4js <a href="http://trac.osgeo.org/proj4js/" target="_blank">http://trac.osgeo.org/proj4js/</a> <a href="./proj4js/LICENSE.md" target="_blank" class="license">(LICENSE)</a></li>
+  </ul>
+  </div>
+ </div>
+</div></div>
+
+<!-- footer -->
+<div id="footer"></div>
+
+<script src="./threejs/three.min.js"></script>
+<script src="./Qgis2threejs.js"></script>
+<script src="./threejs/OrbitControls.js"></script>
+<script>
+var option = Q3D.Options;
+
+</script>
+<script src="./20150630215811.js"></script>
+<script>
+if (typeof proj4 !== "undefined") document.getElementById("lib_proj4js").style.display = "list-item";
+
+var container = document.getElementById("webgl");
+// initialize application
+var app = Q3D.application;
+app.init(container);
+
+// load the project
+app.loadProject(project);
+
+app.addEventListeners();
+app.start();
+
+</script>
+<script src="./dat-gui/dat.gui.min.js"></script>
+<script src="./dat-gui_panel.js"></script>
+<script>
+// initialize dat-gui panel
+Q3D.gui.init();
+</script>
 </body>
 </html>
